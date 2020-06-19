@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[2]:
+# In[36]:
 
 
 #import package
@@ -15,7 +15,7 @@ from cforest.forest import CausalForest
 from sklearn.model_selection import train_test_split
 
 
-# In[3]:
+# In[37]:
 
 
 #import the data
@@ -25,18 +25,18 @@ st.title("Welcome to the Prediction App of Tariff Impact on Changes in Import Va
 st.image(image, use_column_width=True)
 
 
-# In[4]:
+# In[38]:
 
 
 #checking the data
-st.write("This is an application for knowing how much the range of import values (quantity imported time product price) change due to 2018 tariff using Causal Forest. Let's try and see!")
-check_data = st.checkbox("See the simple data")
+st.write("\n This help you to quantify how much is the range of import values (quantity imported time product price) change due to 2018 tariff using Causal Forest. Let's try and see! \n")
+check_data = st.checkbox("\n See the simple data \n")
 if check_data:
     st.write(data.head())
-st.write("Now let's find out how much the import values when we choosing some parameters.")
+st.write("\n Now let's find out how much the import values when we choosing some parameters. \n")
 
 
-# In[5]:
+# In[39]:
 
 
 #input the numbers
@@ -56,14 +56,14 @@ tax_l = data.tax_l.mean()
 cn_mnc_ratio    = st.slider("What is your business's multinational corporation ratio in China?",data.cn_mnc_ratio.min(), data.cn_mnc_ratio.max(),data.cn_mnc_ratio.mean())
 
 
-# In[6]:
+# In[40]:
 
 
 # create the input array
 newx = np.array([[va_y, va_l, pl_l, inter_y, sk_l, m_l, k_l, rental_l,temp_l, it_l, mkt_l, outsource_l, tax_l, cn_mnc_ratio]])
 
 
-# In[8]:
+# In[41]:
 
 
 X = data[['va_y', 'va_l', 'pl_l', 'inter_y', 'sk_l',
@@ -73,14 +73,13 @@ y = data['crossiv']
 t = data['Treated'].astype('bool')
 
 
-# In[10]:
+# In[42]:
 
 
-x_train, x_test, y_train, y_test, treat_train, treat_test = train_test_split(X, y, t,
-                                                                             test_size=0.5, random_state=42)
+x_train, x_test, y_train, y_test, treat_train, treat_test = train_test_split(X, y, t, test_size=0.5)
 
 
-# In[11]:
+# In[43]:
 
 
 cfparams = {
@@ -93,33 +92,31 @@ cfparams = {
 }
 
 
-# In[12]:
+# In[44]:
 
 
 cf = CausalForest(**cfparams)
 
 
-# In[13]:
+# In[45]:
 
 
 cf = cf.fit(x_train, treat_train, y_train)
 
 
-# In[14]:
+# In[46]:
 
 
-#modelling step
-#import your model
 errors = np.sqrt(mean_squared_error(y_test,cf.predict(x_test)))
 
 
-# In[15]:
+# In[47]:
 
 
 predictions = cf.predict(newx)
 
 
-# In[16]:
+# In[48]:
 
 
 #checking prediction house price
