@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[36]:
+# In[3]:
 
 
 #import package
@@ -15,17 +15,17 @@ from cforest.forest import CausalForest
 from sklearn.model_selection import train_test_split
 
 
-# In[37]:
+# In[4]:
 
 
 #import the data
-data = pd.read_csv("d:/git/InSightProject - Copy/data/processed/cross_import_cn.csv")
-image = Image.open("d:/git\InSightProject/streamlit_folder/bike.png")
+data = pd.read_csv('d:/git/InSightProject/data/processed/cross_import_cn.csv')
+image = Image.open("d:/git/InSightProject/streamlit_folder/bike.png")
 st.title("Welcome to the Prediction App of Tariff Impact on Changes in Import Value Percentage")
 st.image(image, use_column_width=True)
 
 
-# In[38]:
+# In[5]:
 
 
 #checking the data
@@ -36,7 +36,7 @@ if check_data:
 st.write("\n Now let's find out how much the import values when we choosing some parameters. \n")
 
 
-# In[39]:
+# In[6]:
 
 
 #input the numbers
@@ -56,14 +56,14 @@ tax_l = data.tax_l.mean()
 cn_mnc_ratio    = st.slider("What is your business's multinational corporation ratio in China?",data.cn_mnc_ratio.min(), data.cn_mnc_ratio.max(),data.cn_mnc_ratio.mean())
 
 
-# In[40]:
+# In[7]:
 
 
 # create the input array
 newx = np.array([[va_y, va_l, pl_l, inter_y, sk_l, m_l, k_l, rental_l,temp_l, it_l, mkt_l, outsource_l, tax_l, cn_mnc_ratio]])
 
 
-# In[41]:
+# In[8]:
 
 
 X = data[['va_y', 'va_l', 'pl_l', 'inter_y', 'sk_l',
@@ -73,13 +73,13 @@ y = data['crossiv']
 t = data['Treated'].astype('bool')
 
 
-# In[42]:
+# In[9]:
 
 
-x_train, x_test, y_train, y_test, treat_train, treat_test = train_test_split(X, y, t, test_size=0.5)
+x_train, x_test, y_train, y_test, treat_train, treat_test = train_test_split(X, y, t, test_size=0.2)
 
 
-# In[43]:
+# In[10]:
 
 
 cfparams = {
@@ -92,31 +92,50 @@ cfparams = {
 }
 
 
-# In[44]:
+# In[11]:
 
 
 cf = CausalForest(**cfparams)
 
 
-# In[45]:
+# In[12]:
 
 
-cf = cf.fit(x_train, treat_train, y_train)
+# cf = cf.fit(x_train, treat_train, y_train)
 
 
-# In[46]:
+# In[14]:
 
 
-errors = np.sqrt(mean_squared_error(y_test,cf.predict(x_test)))
+# cf.save('d:/git/InSightProject/data/processed/cf-tariff-saved.csv')
 
 
-# In[47]:
+# In[15]:
 
 
-predictions = cf.predict(newx)
+cff = CausalForest(**cfparams)
+cff = cff.load("d:/git/InSightProject/data/processed/cf-tariff-saved.csv")
 
 
-# In[48]:
+# In[22]:
+
+
+# errors = np.sqrt(mean_squared_error(y_test,cff.predict(x_test)))
+
+
+# In[23]:
+
+
+errors = 4.216789694224899
+
+
+# In[24]:
+
+
+predictions = cff.predict(newx)
+
+
+# In[25]:
 
 
 #checking prediction house price
